@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>IFG-Anfragen</title>
+    <style type="text/css">
+    body {
+      font-family: Helvetica, sans-serif;
+    }
+    .axis path,
+    .axis .domain {
+      fill: none;
+    }
+    .axis .major text {
+      fill: #ddd;
+      font-size: 18px;
+    }
+    .axis .major line {
+      stroke: #ddd;
+      shape-rendering: crispEdges;
+    }
+    .x.axis .major line {
+      stroke-width: 2px;
+    }
+    .dot {
+      fill: #ddd;
+      cursor: pointer;
+    }
+    .line {
+      fill: none;
+      stroke-width: 4px;
+    }
+    .circle-number {
+      font-size: 12px;
+      font-weight: normal;
+    }
+    #label {
+      font-size: 24px;
+    }
+    #vis {
+      margin-top: 20px;
+    }
+    .button {
+      float:right;
+      display: block;
+      padding: 10px 20px;
+      text-decoration: none;
+      color: #333;
+      background-color: #E3E3E3;
+      border: 1px solid #444;
+    }
+
+    .button:hover {
+      background-color: #fff;
+    }
+
+    .button.grey {
+      margin: 5px;
+      border-color: #fff;
+    }
+
+    .auswahl {
+      background-color: #e3e3e3;
+      padding: 10px;
+    }
+
+    .auswahl-liste {
+      list-style: none;
+      margin-top: 0;
+    }
+    .auswahl-liste  li {
+      float: left;
+      width: 50%;
+    }
+    * .auswahl-liste  li input {
+      display: none;
+    }
+
+    .auswahl-liste li span {
+      padding-left: 17px;
+    }
+    .auswahl-liste li input:checked+span {
+      padding-left: 0px;
+    }
+    .auswahl-liste li input+span:before {
+      width: 0px;
+      padding: 0px;
+    }
+    .auswahl-liste li input:checked+span:before {
+      width: 9px;
+      padding-right: 5px;
+      line-height: 12px;
+      margin:0;
+      content: "✓";
+    }
+    label {
+      cursor: pointer;
+    }
+    .close, .close:hover, .close:visited {
+      font-size: 24px;
+      float:right;
+      text-decoration: none;
+      color: #333;
+      width: 20px;
+      line-height: 20px;
+      padding: 0 2px 2px;
+      text-align: center;
+      border: 1px solid #fff;
+      -webkit-border-radius: 50%;
+      -moz-border-radius: 50%;
+      border-radius: 50%;
+    }
+    .close:hover {
+      background-color: #fff;
+    }
+    .clearfix {
+      clear: both;
+    }
+    </style>
+  </head>
+  <body>
+    <a id="auswahl-button" class="button" href="#auswahl">Institutionen wählen</a>
+    <h2>
+      Wie vielen IFG-Anfragen wird stattgegeben?
+    </h2>
+    <div class="clearfix"></div>
+    <div id="auswahl" class="auswahl" style="display:none">
+      <a class="close" href="#">&times;</a>
+      <div class="clearfix"></div>
+      <ul class="auswahl-liste">
+        <li>
+          <label><input type="checkbox" name="show" value="BK"><span>Kanzleramt</span></label>
+        </li>
+        <li>
+          <label><input type="checkbox" name="show" value="BMAS"><span>Arbeitsministerium</span></label>
+        </li>
+        <li>
+          <label><input type="checkbox" name="show" value="AA"><span>Auswärtiges Amt</span></label>
+        </li>
+        <li>
+          <label><input type="checkbox" name="show" value="BMI"><span>Innenministerium</span></label>
+        </li>
+        <li>
+          <label><input type="checkbox" name="show" value="BMJ"><span>Justizministerium</span></label>
+        </li>
+        <li>
+          <label><input type="checkbox" name="show" value="BMF"><span>Finanzministerium</span></label>
+        </li>
+        <li>
+          <label><input type="checkbox" name="show" value="BMWi"><span>Wirtschaftsministerium</span></label>
+        </li>
+        <li>
+          <label><input type="checkbox" name="show" value="BMELV"><span>Verbraucherschutzministerium</span></label>
+        </li>
+        <li>
+          <label><input type="checkbox" name="show" value="BMVg"><span>Verteidigungsministerium</span></label>
+        </li>
+        <li>
+          <label><input type="checkbox" name="show" value="BMFSFJ"><span>Familienministerium</span></label>
+        </li>
+        <li>
+          <label><input type="checkbox" name="show" value="BMG"><span>Gesundheitsministerium</span></label>
+        </li>
+        <li>
+          <label><input type="checkbox" name="show" value="BMVBS"><span>Verkehrsministerium</span></label>
+        </li>
+        <li>
+          <label><input type="checkbox" name="show" value="BMU"><span>Umweltministerium</span></label>
+        </li>
+        <li>
+          <label><input type="checkbox" name="show" value="BMBF"><span>Bildungsministerium</span></label>
+        </li>
+        <li>
+          <label><input type="checkbox" name="show" value="BKM"><span>Beauftragter für Kultur und Medien</span></label>
+        </li>
+        <li>
+          <label><input type="checkbox" name="show" value="BMZ"><span>Entwicklungsministerium</span></label>
+        </li>
+        <li>
+          <label><input type="checkbox" name="show" value="BPA"><span>Bundespresseamt</span></label>
+        </li>
+        <li>
+          <label><input type="checkbox" name="show" value="BPraesA"><span>Bundespräsidialamt</span></label>
+        </li>
+        <li>
+          <label><input type="checkbox" name="show" value="BT"><span>Bundestag</span></label>
+        </li>
+        <li>
+          <label><input type="checkbox" name="show" value="BBank"><span>Bundesbank</span></label>
+        </li>
+        <li>
+          <label><input type="checkbox" name="show" value="BfDI"><span>Datenschutz/Informationsfreiheit</span></label>
+        </li>
+        <li>
+          <label><input type="checkbox" name="show" value="BRH"><span>Bundesrechnungshof</span></label>
+        </li>
+      </ul>
+      <div class="clearfix"></div>
+      <a class="button grey" id="choose-all" href="#">alle wählen</a> <a class="button grey" id="choose-none" href="#">keine wählen</a>
+      <div class="clearfix"></div>
+    </div>
+    <div id="vis"></div>
+    <script src="js/d3.v3.min.js" type="text/javascript"></script>
+    <script src="js/jquery.min.js" type="text/javascript"></script>
+    <script src="js/underscore.min.js" type="text/javascript"></script>
+    <script src="js/backbone.min.js" type="text/javascript"></script>
+    <script type="text/javascript">
+      var IFGVis = IFGVis || {};
+      IFGVis.colors = {
+        "BK": "#005D9F",
+        "BMAS": "#A8C7EA",
+        "AA": "#C5A4CE",
+        "BMI": "#8E949A",
+        "BMJ": "#00407D",
+        "BMF": "#0099C6",
+        "BMWi": "#C9E8FB",
+        "BMELV": "#769A99",
+        "BMVg": "#C6C5BA",
+        "BMFSFJ": "#007EAA",
+        "BMG": "#009CCC",
+        "BMVBS": "#27234D",
+        "BMU": "#AAAA11",
+        "BMBF": "#6F9ED4",
+        "BKM": "#695984",
+        "BMZ": "#769A99",
+        "BPA": "#312783",
+        "BPraesA": "#73C7D2",
+        "BT": "#00676D",
+        "BBank": "#827AB8",
+        "BfDI": "#B77322",
+        "BRH": "#6D7072"
+      };
+
+      IFGVis.labels = {
+        "BK": "Kanzleramt",
+        "BMAS": "Arbeitsministerium",
+        "AA": "Auswärtiges Amt",
+        "BMI": "Innenministerium",
+        "BMJ": "Justizministerium",
+        "BMF": "Finanzministerium",
+        "BMWi": "Wirtschaftsministerium",
+        "BMELV": "Verbraucherschutzministerium",
+        "BMVg": "Verteidigungsministerium",
+        "BMFSFJ": "Familienministerium",
+        "BMG": "Gesundheitsministerium",
+        "BMVBS": "Verkehrsministerium",
+        "BMU": "Umweltministerium",
+        "BMBF": "Bildungsministerium",
+        "BKM": "Beauftragter für Kultur und Medien",
+        "BMZ": "Entwicklungsministerium",
+        "BPA": "Bundespresseamt",
+        "BPraesA": "Bundespräsidialamt",
+        "BT": "Bundestag",
+        "BBank": "Bundesbank",
+        "BfDI": "Datenschutz- und Informationsfreiheitsbeauftragter",
+        "BRH": "Bundesrechnungshof"
+      };
+      IFGVis.defaultInstitution = 'BMF';
+    </script>
+    <script src="js/ifg.js" type="text/javascript"></script>
+  </body>
+</html>
