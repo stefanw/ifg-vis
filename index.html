@@ -12,30 +12,34 @@
       fill: none;
     }
     .axis .major text {
-      fill: #ddd;
+      fill: #999;
       font-size: 18px;
     }
     .axis .major line {
       stroke: #ddd;
+      stroke-width: 1px;
       shape-rendering: crispEdges;
     }
-    .x.axis .major line {
-      stroke-width: 2px;
+    .axis .major line.bottomline {
+      stroke: #333;
     }
     .dot {
-      fill: #ddd;
+      fill: #999;
       cursor: pointer;
+      fill-opacity: 0.3;
     }
     .line {
       fill: none;
       stroke-width: 4px;
+      stroke-opacity: 0.7;
     }
     .circle-number {
-      font-size: 12px;
-      font-weight: normal;
+      font-size: 13px;
+      font-weight: bold;
     }
     #label {
-      font-size: 24px;
+      font-size: 18px;
+      font-weight: bold;
     }
     #vis {
       margin-top: 20px;
@@ -60,7 +64,8 @@
     }
 
     .auswahl {
-      background-color: #e3e3e3;
+      background-color: #f0f0f0;
+      font-size: 12px;
       padding: 10px;
     }
 
@@ -70,28 +75,19 @@
     }
     .auswahl-liste  li {
       float: left;
-      width: 50%;
+      width: 30%;
+      padding: 5px 0;
     }
+
     * .auswahl-liste  li input {
       display: none;
     }
 
     .auswahl-liste li span {
-      padding-left: 17px;
+      padding-left: 15px;
     }
-    .auswahl-liste li input:checked+span {
-      padding-left: 0px;
-    }
-    .auswahl-liste li input+span:before {
-      width: 0px;
-      padding: 0px;
-    }
-    .auswahl-liste li input:checked+span:before {
-      width: 9px;
-      padding-right: 5px;
-      line-height: 12px;
-      margin:0;
-      content: "✓";
+    .auswahl-liste li input:checked + span{
+      background: url('img/haken.png') no-repeat;
     }
     label {
       cursor: pointer;
