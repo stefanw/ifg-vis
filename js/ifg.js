@@ -178,9 +178,9 @@
 
 
     group.data(groupData)
-      .on("mouseover", activateGroup(key, true))
-      .on("mousemove", activateGroup(key, true))
-      .on("mouseout", deactivateGroup(key))
+      // .on("mouseover", activateGroup(key, true))
+      // .on("mousemove", activateGroup(key, true))
+      // .on("mouseout", deactivateGroup(key))
       .on("touch", navigateToKey(key))
       .on("click", navigateToKey(key));
 
@@ -190,8 +190,7 @@
     };
   };
 
-
-  d3.csv("data.csv", function(error, data) {
+  var dataLoaded = function(error, data) {
     data.forEach(function(d) {
       d.year = parseYear(d.year);
       d.count = parseInt(d.count, 10);
@@ -227,7 +226,7 @@
     }
 
     init();
-  });
+  };
 
   var initial = true;
 
@@ -311,4 +310,8 @@
       $('#auswahl').slideUp();
     });
   });
+
+  dataLoaded(null, IFGVis.data);
+  // d3.csv("data.csv", dataLoaded);
+
 }());
