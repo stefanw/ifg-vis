@@ -44,10 +44,10 @@
       .rangeRound([1, IFGVis.maxDotSize]);
 
   var connectionLine = d3.svg.line()
-    .x(function(d) { return x(d.year); })
-    .y(function(d) { return y(d.transparency); })
+    .x(function(d) { return d.x; })
+    .y(function(d) { return d.y; })
     .interpolate("monotone")
-    .tension(0.9999);
+    .tension(0.3);
     // .defined(function(d){
     //   // console.log(d.name);
     //   return true;
@@ -116,16 +116,37 @@
 
   var groups = {};
 
+  var addToGroupData = function(groupData){
+    var newData = [], d;
+    for (var i = 0; i < groupData.length; i += 1){
+      d = $.extend({}, groupData[i]);
+      d.x = x(d.year) - circleRadius(d.count);
+      d.y = y(d.transparency);
+      newData.push(d);
+      d = $.extend({}, groupData[i]);
+      d.x = x(d.year);
+      d.y = y(d.transparency);
+      newData.push(d);
+      d = $.extend({}, groupData[i]);
+      d.x = x(d.year) + circleRadius(d.count);
+      d.y = y(d.transparency);
+      newData.push(d);
+    }
+    return newData;
+  };
+
   var makeGroup = function(key, groupData){
     var group = svg.append('g')
       .attr('transform', 'translate(' + innerX.left + ',' + innerY.top + ')')
       .attr('class', 'group ' + key);
 
+    var connectionData = addToGroupData(groupData);
+
     group.append("svg:path")
         .attr('class', 'line')
         .style('stroke', IFGVis.colors[key])
         .style('display', 'none')
-        .attr("d", connectionLine(groupData));
+        .attr("d", connectionLine(connectionData));
 
     var groupSelect = group
       .selectAll("." + key)
