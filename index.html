@@ -50,8 +50,20 @@
       padding: 10px 20px;
       text-decoration: none;
       color: #333;
-      background-color: #E3E3E3;
-      border: 1px solid #444;
+      background-color: white;
+      background-image: -webkit-linear-gradient(top, white, #F7F7F7);
+      background-image: -moz-linear-gradient(top, white, #F7F7F7);
+      background-image: -ms-linear-gradient(top, white, #F7F7F7);
+      background-image: -o-linear-gradient(top, white, #F7F7F7);
+      background-image: linear-gradient(top, white, #F7F7F7);
+      -webkit-border-radius: 2px;
+      -moz-border-radius: 2px;
+      border-radius: 2px;
+      border: 1px solid #C1C1C1;
+/*display: inline-block;*/
+      font: 400 11px/1 sans-serif;
+      text-align: center;
+      min-width: 60px;
     }
 
     .button:hover {
@@ -76,10 +88,15 @@
     .auswahl-liste  li {
       float: left;
       width: 30%;
-      padding: 5px 0;
     }
 
-    * .auswahl-liste  li input {
+    .auswahl-liste li label {
+      display: block;
+      cursor: pointer;
+      padding: 5px 0 !important;
+    }
+
+    * .auswahl-liste li input {
       display: none;
     }
 
@@ -89,10 +106,13 @@
     .auswahl-liste li input:checked + span{
       background: url('img/haken.png') no-repeat;
     }
-    label {
-      cursor: pointer;
+
+    .auswahl-liste li:hover {
+      color: #990000;
     }
+
     .close, .close:hover, .close:visited {
+      color: #ddd;
       font-size: 24px;
       float:right;
       text-decoration: none;
