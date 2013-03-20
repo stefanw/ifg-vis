@@ -76,7 +76,10 @@
       svg.selectAll("." + key).style("fill", IFGVis.colors[key]);
       obj.group.select('.line').style('display', 'inline');
       if (stack[stack.length - 1] === key) {
-        svg.select('#label').text(IFGVis.labels[key]).style('fill', IFGVis.colors[key]);
+        svg.select('#label')
+          .text(IFGVis.labels[key])
+          .style('fill', IFGVis.colors[key])
+          .attr('transform', 'translate(' + (width) + ',' + obj.labelpos + ')');
         obj.group.selectAll('.circle-number').style('display', 'inline');
       } else {
         obj.group.selectAll('.circle-number').style('display', 'none');
@@ -211,7 +214,11 @@
       .on("touch", navigateToKey(key))
       .on("click", navigateToKey(key));
 
+    var lastBubble = groupData[groupData.length - 1];
+    var labelpos = y(lastBubble.transparency) - circleRadius(lastBubble.count) + 40;
+
     return {
+      labelpos: labelpos,
       group: group,
       isActive: false
     };
