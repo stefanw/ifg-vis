@@ -120,10 +120,14 @@
   var groups = {};
 
   var addToGroupData = function(groupData){
-    var newData = [], d;
+    var newData = [], d, rad;
     for (var i = 0; i < groupData.length; i += 1){
+      rad = circleRadius(groupData[i].count);
+      if (rad <= IFGVis.dotSizeNeedsHelp) {
+        rad = IFGVis.helpDotSize;
+      }
       d = $.extend({}, groupData[i]);
-      d.x = x(d.year) - circleRadius(d.count);
+      d.x = x(d.year) - rad;
       d.y = y(d.transparency);
       newData.push(d);
       d = $.extend({}, groupData[i]);
@@ -131,7 +135,7 @@
       d.y = y(d.transparency);
       newData.push(d);
       d = $.extend({}, groupData[i]);
-      d.x = x(d.year) + circleRadius(d.count);
+      d.x = x(d.year) + rad;
       d.y = y(d.transparency);
       newData.push(d);
     }
@@ -158,8 +162,8 @@
     var circleGroup = groupSelect
       .enter().append("g");
     circleGroup
-      .attr("class", "dot " + key)
       .append('circle')
+      .attr("class", "dot " + key)
       .attr("r", function(d) {
         return circleRadius(d.count);
       })
@@ -167,7 +171,7 @@
       .attr("cy", function(d) { return y(d.transparency); });
 
     groupSelect.filter(function(d, i){
-      return circleRadius(d.count) < 5;
+      return circleRadius(d.count) <= IFGVis.dotSizeNeedsHelp;
     }).append('circle')
       .attr("r", IFGVis.helpDotSize)
       .attr("class", "helpdot")
