@@ -28,6 +28,12 @@
       cursor: pointer;
       fill-opacity: 0.3;
     }
+    .helpdot {
+      stroke: #999;
+      fill: transparent;
+      cursor: pointer;
+      stroke-opacity: 0.7;
+    }
     .line {
       fill: none;
       stroke-width: 4px;
@@ -272,6 +278,8 @@
         "BRH": "Bundesrechnungshof"
       };
       IFGVis.defaultInstitution = 'BMF';
+      IFGVis.helpDotSize = 10;
+      IFGVis.maxDotSize = 50;
     </script>
     <script src="data.js" type="text/javascript"></script>
     <script id="ifg" src="js/ifg.js" type="text/javascript"></script>

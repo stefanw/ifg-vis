@@ -41,7 +41,7 @@
       .orient("top");
 
   var circleRadius = d3.scale.sqrt()
-      .rangeRound([1, 50]);
+      .rangeRound([1, IFGVis.maxDotSize]);
 
   var connectionLine = d3.svg.line()
     .x(function(d) { return x(d.year); })
@@ -139,6 +139,14 @@
       .attr("r", function(d) {
         return circleRadius(d.count);
       })
+      .attr("cx", function(d) { return x(d.year); })
+      .attr("cy", function(d) { return y(d.transparency); });
+
+    groupSelect.filter(function(d, i){
+      return circleRadius(d.count) < 5;
+    }).append('circle')
+      .attr("r", IFGVis.helpDotSize)
+      .attr("class", "helpdot")
       .attr("cx", function(d) { return x(d.year); })
       .attr("cy", function(d) { return y(d.transparency); });
 
