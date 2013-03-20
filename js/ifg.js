@@ -105,6 +105,7 @@
       if (obj.isActive) { return; }
       obj.group.select('.line').style('display', 'none');
       obj.group.selectAll(".dot").style("fill", "");
+      obj.group.selectAll('.circle-number').style('display', 'none');
       refreshAllActiveGroups();
     };
   };
