@@ -36,7 +36,7 @@
 
   var xAxis = d3.svg.axis()
       .scale(x)
-      .tickSize(-height, 0, 0)
+      .tickSize(-height + innerY.bottom, 0, 0)
       .tickPadding(6)
       .orient("top");
 
@@ -47,7 +47,7 @@
     .x(function(d) { return x(d.year); })
     .y(function(d) { return y(d.transparency); })
     .interpolate("monotone")
-    .tension(0.3);
+    .tension(0.9999);
     // .defined(function(d){
     //   // console.log(d.name);
     //   return true;
@@ -65,12 +65,14 @@
     .attr('transform', 'translate(' + innerY.left + ',' + innerY.top + ')')
     .call(yAxis);
 
+  svg.select('.y.axis .major line').classed('bottomline', true);
+
   var activeGroups = 0;
 
   var activateGroup = function(key, hover) {
     return function(){
       var obj = groups[key];
-      obj.group.moveToFront();
+      // obj.group.moveToFront();
       svg.selectAll("." + key).style("fill", IFGVis.colors[key]);
       svg.select('#label').text(IFGVis.labels[key]).style('fill', IFGVis.colors[key]);
       obj.group.select('.line').style('display', 'inline');
@@ -155,7 +157,7 @@
       .style('display', 'none')
       .attr('text-anchor', 'middle')
       .text(function(d){
-          return d.transparency + '%';
+          return d.transparency + '% bewilligt';
       });
 
     var t = circleGroup.append('text')
@@ -169,12 +171,14 @@
     t.append('tspan')
       .attr('x', 0)
       .text(function(d){
-          return d.count;
+          return d.count + (d.count <= 1000 ? ' Anträge' : '');
       });
     t.append('tspan')
       .attr('x', 0)
       .attr('dy', 15)
-      .text('Bewilligungen');
+      .text(function(d){
+        return d.count > 1000 ? 'Anträge' : '';
+      });
 
 
     group.data(groupData)
@@ -211,8 +215,8 @@
 
 
     svg.append('text')
-      .attr('text-anchor', 'start')
-      .attr('transform', 'translate(' + (innerX.left) + ',' + (innerY.top) + ')')
+      .attr('text-anchor', 'end')
+      .attr('transform', 'translate(' + (width) + ',' + (innerY.top) + ')')
       .attr('id', 'label');
 
     circleRadius.domain(d3.extent(data, function(d) { return d.count; }));
