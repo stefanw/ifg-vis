@@ -74,9 +74,9 @@
       var obj = groups[key];
       // obj.group.moveToFront();
       svg.selectAll("." + key).style("fill", IFGVis.colors[key]);
-      svg.select('#label').text(IFGVis.labels[key]).style('fill', IFGVis.colors[key]);
       obj.group.select('.line').style('display', 'inline');
-      if (activeGroups === 1 || hover) {
+      if (stack[stack.length - 1] === key) {
+        svg.select('#label').text(IFGVis.labels[key]).style('fill', IFGVis.colors[key]);
         obj.group.selectAll('.circle-number').style('display', 'inline');
       } else {
         obj.group.selectAll('.circle-number').style('display', 'none');
@@ -99,9 +99,6 @@
   var deactivateGroup = function(key) {
     return function() {
       var obj = groups[key];
-      if (!obj.isActive || activeGroups > 1) {
-        obj.group.selectAll('.circle-number').style('display', 'none');
-      }
       if (obj.isActive) { return; }
       obj.group.select('.line').style('display', 'none');
       obj.group.selectAll(".dot").style("fill", "");
@@ -114,9 +111,6 @@
       if (groups[key].isActive){
         activateGroup(key)();
       }
-    }
-    if (activeGroups > 1 || activeGroups === 0){
-      svg.select('#label').text("");
     }
   };
 
@@ -182,9 +176,9 @@
 
 
     group.data(groupData)
-      // .on("mouseover", activateGroup(key, true))
+      .on("mouseover", activateGroup(key, true))
       // .on("mousemove", activateGroup(key, true))
-      // .on("mouseout", deactivateGroup(key))
+      .on("mouseout", deactivateGroup(key))
       .on("touch", navigateToKey(key))
       .on("click", navigateToKey(key));
 
@@ -232,7 +226,7 @@
     init();
   };
 
-  var initial = true;
+  var initial = true, stack = [];
 
   var WorkspaceRouter = Backbone.Router.extend({
     routes: {
@@ -251,14 +245,17 @@
       }
       initial = false;
       args = args.split('&');
+      $('#label').text('');
       $('input').prop('checked', false);
       for (var key in groups){
         groups[key].isActive = false;
         deactivateGroup(key)();
       }
       activeGroups = 0;
+      stack = [];
       for (var i = 0; i < args.length; i += 1) {
         if (groups[args[i]] !== undefined) {
+          stack.push(args[i]);
           $('input[value="' + args[i] + '"]').prop('checked', true);
           activeGroups += 1;
           permanentlyActivateGroup(args[i])();
@@ -279,16 +276,23 @@
     return function(){
       var checked = $('input[value="' + key + '"]').prop('checked');
       $('input[value="' + key + '"]').prop('checked', !checked);
+      toggleOnStack(key, !checked);
       updateNav();
     };
   };
 
+  var toggleOnStack = function(key, add){
+    if (add) {
+      stack.push(key);
+    } else {
+      stack = stack.filter(function(el){
+        return el !== key;
+      });
+    }
+  };
+
   var updateNav = function(){
-    var args = [];
-    _.each($('.auswahl-liste input:checked'), function(el){
-      args.push($(el).val());
-    });
-    router.navigate(args.join('&'), {trigger: true});
+    router.navigate(stack.join('&'), {trigger: true});
   };
 
   $(function(){
@@ -299,14 +303,20 @@
     $('#choose-all').on('click touchstart', function(e){
       e.preventDefault();
       $('.auswahl-liste input').prop('checked', true);
+      stack = [];
+      $('.auswahl-liste input').each(function(i, el){
+        stack.push($(el).val());
+      });
       updateNav();
     });
     $('#choose-none').on('click touchstart', function(e){
       e.preventDefault();
       $('.auswahl-liste input').prop('checked', false);
+      stack = [];
       updateNav();
     });
     $('.auswahl-liste input').change(function(e){
+      toggleOnStack($(this).val(), $(this).prop('checked'));
       updateNav();
     });
     $('.close').on('click touchstart', function(e){
