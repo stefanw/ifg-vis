@@ -70,14 +70,14 @@
   var activateGroup = function(key, hover) {
     return function(){
       var obj = groups[key];
-      // obj.group.moveToFront();
-      svg.selectAll("." + key).style("fill", IFGVis.colors[key]);
+      obj.group.moveToFront();
+      svg.selectAll("." + key).style("fill", IFGVis.colors[key]).classed('active', true);
       obj.group.select('.line').style('display', 'inline');
       if (stack[stack.length - 1] === key) {
-        svg.select('#label')
+        svg.select('#label').moveToFront()
           .text(IFGVis.labels[key])
           .style('fill', IFGVis.colors[key])
-          .attr('transform', 'translate(' + (width) + ',' + obj.labelpos + ')');
+          .attr('transform', 'translate(' + (innerXWidth + innerX.left) + ',' + obj.labelpos + ')');
         obj.group.selectAll('.circle-number').style('display', 'inline');
       } else {
         obj.group.selectAll('.circle-number').style('display', 'none');
@@ -102,7 +102,7 @@
       var obj = groups[key];
       if (obj.isActive) { return; }
       obj.group.select('.line').style('display', 'none');
-      obj.group.selectAll(".dot").style("fill", "");
+      obj.group.selectAll(".dot").style("fill", "").classed('active', false);
       obj.group.selectAll('.circle-number').style('display', 'none');
       refreshAllActiveGroups();
     };
@@ -114,6 +114,10 @@
         activateGroup(key)();
       }
     }
+    if (stack.length > 0) {
+      groups[stack[stack.length - 1]].group.moveToFront();
+    }
+    svg.select('#label').moveToFront();
   };
 
   var groups = {};
@@ -228,7 +232,7 @@
       .on("click", navigateToKey(key));
 
     var lastBubble = groupData[groupData.length - 1];
-    var labelpos = y(lastBubble.transparency) - circleRadius(lastBubble.count) + 40;
+    var labelpos = y(lastBubble.transparency) - circleRadius(lastBubble.count) + 5;
 
     return {
       labelpos: labelpos,
@@ -259,7 +263,7 @@
 
     svg.append('text')
       .attr('text-anchor', 'end')
-      .attr('transform', 'translate(' + (width) + ',' + (innerY.top) + ')')
+      .attr('transform', 'translate(' + (innerXWidth) + ',' + (innerY.top) + ')')
       .attr('id', 'label');
 
     circleRadius.domain(d3.extent(data, function(d) { return d.count; }));
