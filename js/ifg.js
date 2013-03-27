@@ -46,12 +46,10 @@
   var connectionLine = d3.svg.line()
     .x(function(d) { return d.x; })
     .y(function(d) { return d.y; })
-    .interpolate("monotone")
-    .tension(0.3);
-    // .defined(function(d){
-    //   // console.log(d.name);
-    //   return true;
-    // });
+    .interpolate("basis")
+    .defined(function(d){
+      return d.defined;
+    });
 
 
   var svg = d3.select("#vis").append("svg")
@@ -120,26 +118,36 @@
 
   var groups = {};
 
-  var addToGroupData = function(groupData){
-    var newData = [], d, rad;
+  var getLineData = function(groupData){
+    var newData = [], d, rad, dist;
     for (var i = 0; i < groupData.length; i += 1){
-      rad = circleRadius(groupData[i].count);
-      if (rad <= IFGVis.dotSizeNeedsHelp) {
-        rad = IFGVis.helpDotSize;
+      if (i < groupData.length - 1) {
+        dist = x(groupData[1].year) - x(groupData[0].year);
+        dist = Math.round((dist - 50) / 2);
       }
-      d = $.extend({}, groupData[i]);
-      d.x = x(d.year) - rad;
-      d.y = y(d.transparency);
-      newData.push(d);
+      rad = dist;
+      if (i > 0){
+        d = $.extend({}, groupData[i]);
+        d.rad = rad;
+        d.x = x(d.year) - rad;
+        d.y = y(d.transparency);
+        d.defined = true;
+        newData.push(d);
+      }
       d = $.extend({}, groupData[i]);
       d.x = x(d.year);
       d.y = y(d.transparency);
+      d.defined = true;
       newData.push(d);
-      d = $.extend({}, groupData[i]);
-      d.x = x(d.year) + rad;
-      d.y = y(d.transparency);
-      newData.push(d);
+      if (i < groupData.length - 1) {
+        d = $.extend({}, groupData[i]);
+        d.x = x(d.year) + rad;
+        d.y = y(d.transparency);
+        d.defined = true;
+        newData.push(d);
+      }
     }
+
     return newData;
   };
 
@@ -148,7 +156,7 @@
       .attr('transform', 'translate(' + innerX.left + ',' + innerY.top + ')')
       .attr('class', 'group ' + key);
 
-    var connectionData = addToGroupData(groupData);
+    var connectionData = getLineData(groupData);
 
     group.append("svg:path")
         .attr('class', 'line')
