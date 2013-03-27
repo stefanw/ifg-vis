@@ -54,8 +54,25 @@
 
   var svg = d3.select("#vis").append("svg")
     .attr("width", width + margin.left + margin.right)
-    .attr("height", height + margin.top + margin.bottom)
-  .append("g")
+    .attr("height", height + margin.top + margin.bottom);
+
+  var filter = svg.append('defs')
+    .append('filter')
+      .attr('id', 'highlight')
+      .attr('x', '0')
+      .attr('y', '0')
+      .attr('width', '1')
+      .attr('height', '1');
+
+  filter.append('feFlood')
+    .attr('flood-color', '#fff')
+    .attr('result', 'out1');
+  filter.append('feComposite')
+    .attr('in', 'SourceGraphic')
+    .attr('in2', 'out1')
+    .attr('operator', 'over');
+
+  svg = svg.append("g")
       .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
   svg.append("g")
@@ -72,16 +89,20 @@
       var obj = groups[key];
       obj.group.moveToFront();
       svg.selectAll("." + key).style("fill", IFGVis.colors[key]).classed('active', true);
-      obj.group.select('.line').style('display', 'inline');
+      obj.group.select('.line').style('display', 'block');
       if (stack[stack.length - 1] === key) {
-        svg.select('#label').moveToFront()
+        svg.select('#label')
           .text(IFGVis.labels[key])
           .style('fill', IFGVis.colors[key])
-          .attr('transform', 'translate(' + (innerXWidth + innerX.left) + ',' + obj.labelpos + ')');
-        obj.group.selectAll('.circle-number').style('display', 'inline');
+          .attr('transform', 'translate(' + (innerXWidth + innerX.left + 40) + ',' + (obj.labelpos + 12) + ')');
+        svg.select('#label-triangle')
+          .attr('transform', 'translate(' + (innerXWidth + innerX.left) + ',' + (obj.labelpos + 20) + ')');
+        svg.selectAll('.label').style('display', 'block');
+        obj.group.selectAll('.circle-number').style('display', 'block');
       } else {
         obj.group.selectAll('.circle-number').style('display', 'none');
       }
+      activeInForeground();
     };
   };
 
@@ -108,16 +129,26 @@
     };
   };
 
+  var activeInForeground = function(){
+    for (var key in groups){
+      if (groups[key].isActive){
+        groups[key].group.moveToFront();
+      }
+    }
+    if (stack.length > 0) {
+      groups[stack[stack.length - 1]].group.moveToFront();
+    }
+    svg.selectAll('.label').moveToFront();
+  };
+
+
   var refreshAllActiveGroups = function(){
     for (var key in groups){
       if (groups[key].isActive){
         activateGroup(key)();
       }
     }
-    if (stack.length > 0) {
-      groups[stack[stack.length - 1]].group.moveToFront();
-    }
-    svg.select('#label').moveToFront();
+    activeInForeground();
   };
 
   var groups = {};
@@ -155,6 +186,12 @@
     return newData;
   };
 
+  var makeTriangle = (function() {
+    var t = d3.svg.symbol();
+    t.size(100);
+    return t;
+  }());
+
   var makeGroup = function(key, groupData){
     var group = svg.append('g')
       .attr('transform', 'translate(' + innerX.left + ',' + innerY.top + ')')
@@ -191,48 +228,54 @@
       .attr("cx", function(d) { return x(d.year); })
       .attr("cy", function(d) { return y(d.transparency); });
 
-    circleGroup.append('text')
-      .attr('class', 'circle-number')
-      .style('fill', IFGVis.colors[key])
+    circleGroup.append('path')
+      .attr('d', makeTriangle.type('triangle-up')())
+      .attr('class', 'triangle circle-number')
       .attr('transform', function(d){
-        return 'translate(' + (x(d.year) + 2) + ',' + (y(d.transparency) - (circleRadius(d.count)) - 10) + ')';
+        return 'translate(' + (x(d.year)) + ',' + (y(d.transparency) + 10) + ')';
       })
-      .style('display', 'none')
-      .attr('text-anchor', 'middle')
-      .text(function(d){
-          return d.transparency + '% bewilligt';
-      });
+      .style('display', 'none');
 
     var t = circleGroup.append('text')
-      .attr('class', 'circle-number')
+      .attr('class', 'circle-number highlight')
       .style('fill', IFGVis.colors[key])
       .attr('transform', function(d){
-        return 'translate(' + (x(d.year)) + ',' + (y(d.transparency) + (circleRadius(d.count)) + 20) + ')';
+        return 'translate(' + (x(d.year)) + ',' + (y(d.transparency) + 26) + ')';
       })
       .style('display', 'none')
       .attr('text-anchor', 'middle');
+
     t.append('tspan')
       .attr('x', 0)
       .text(function(d){
-          return d.count + (d.count <= 1000 ? ' Anträge' : '');
+          return d.transparency + '%';
       });
     t.append('tspan')
       .attr('x', 0)
       .attr('dy', 15)
       .text(function(d){
-        return d.count > 1000 ? 'Anträge' : '';
+          return 'von ' + d.count;
       });
+    t.append('tspan')
+      .attr('x', 0)
+      .attr('dy', 15)
+      .text(function(d){
+        return d.count === 1 ? 'Antrag' : 'Anträgen';
+      });
+    t.append('tspan')
+      .attr('x', 0)
+      .attr('dy', 15)
+      .text('bewilligt');
 
 
     group.data(groupData)
       .on("mouseover", activateGroup(key, true))
-      // .on("mousemove", activateGroup(key, true))
       .on("mouseout", deactivateGroup(key))
       .on("touch", navigateToKey(key))
       .on("click", navigateToKey(key));
 
     var lastBubble = groupData[groupData.length - 1];
-    var labelpos = y(lastBubble.transparency) - circleRadius(lastBubble.count) + 5;
+    var labelpos = y(lastBubble.transparency);
 
     return {
       labelpos: labelpos,
@@ -255,6 +298,7 @@
     });
 
     x.domain(d3.extent(data, function(d) { return d.year; }));
+
     svg.append("g")
       .attr("class", "x axis")
       .attr('transform', 'translate(' + innerX.left + ',' + innerX.top + ')')
@@ -264,7 +308,14 @@
     svg.append('text')
       .attr('text-anchor', 'end')
       .attr('transform', 'translate(' + (innerXWidth) + ',' + (innerY.top) + ')')
+      .attr('class', 'highlight label')
       .attr('id', 'label');
+
+    svg.append('path')
+      .attr('id', 'label-triangle')
+      .attr('d', makeTriangle.type('triangle-down')())
+      .attr('class', 'triangle label')
+      .style('display', 'none');
 
     circleRadius.domain(d3.extent(data, function(d) { return d.count; }));
 
@@ -298,7 +349,7 @@
       }
       initial = false;
       args = args.split('&');
-      $('#label').text('');
+      $('.label').hide();
       $('input').prop('checked', false);
       for (var key in groups){
         groups[key].isActive = false;
