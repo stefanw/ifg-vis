@@ -123,7 +123,7 @@
       var obj = groups[key];
       if (obj.isActive) { return; }
       obj.group.select('.line').style('display', 'none');
-      obj.group.selectAll(".dot").style("fill", "").classed('active', false);
+      svg.selectAll(".dot").style("fill", "").classed('active', false);
       obj.group.selectAll('.circle-number').style('display', 'none');
       refreshAllActiveGroups();
     };
@@ -211,22 +211,6 @@
 
     var circleGroup = groupSelect
       .enter().append("g");
-    circleGroup
-      .append('circle')
-      .attr("class", "dot " + key)
-      .attr("r", function(d) {
-        return circleRadius(d.count);
-      })
-      .attr("cx", function(d) { return x(d.year); })
-      .attr("cy", function(d) { return y(d.transparency); });
-
-    groupSelect.filter(function(d, i){
-      return circleRadius(d.count) <= IFGVis.dotSizeNeedsHelp;
-    }).append('circle')
-      .attr("r", IFGVis.helpDotSize)
-      .attr("class", "helpdot")
-      .attr("cx", function(d) { return x(d.year); })
-      .attr("cy", function(d) { return y(d.transparency); });
 
     circleGroup.append('path')
       .attr('d', makeTriangle.type('triangle-up')())
@@ -322,6 +306,50 @@
     var filterFunc = function(key){
       return function(d){ return d.name === key; };
     };
+
+
+    // Add Circles independent from group
+    var circleData = data.slice();
+    circleData.sort(function(a, b){
+      return b.count - a.count;
+    });
+    svg.selectAll('.dot')
+      .data(circleData)
+      .enter()
+      .append('circle')
+      .attr("class", function(d){
+        return "dot circle " + d.name;
+      })
+      .attr("r", function(d) {
+        return circleRadius(d.count);
+      });
+
+    var helpCircleData = circleData.slice().filter(function(d, i){
+      return circleRadius(d.count) <= IFGVis.dotSizeNeedsHelp;
+    });
+    svg.selectAll('.helpdot')
+      .data(helpCircleData)
+      .enter()
+      .append('circle')
+      .attr("r", IFGVis.helpDotSize)
+      .attr("class", "helpdot circle");
+
+    svg.selectAll('.circle')
+      .attr('transform', 'translate(' + innerX.left + ',' + innerY.top + ')')
+      .attr("cx", function(d) { return x(d.year); })
+      .attr("cy", function(d) { return y(d.transparency); })
+      .on("mouseover", function(d){
+        activateGroup(d.name, true)();
+      })
+      .on("mouseout", function(d){
+        deactivateGroup(d.name)();
+      })
+      .on("touch", function(d){
+        navigateToKey(d.name)();
+      })
+      .on("click", function(d){
+        navigateToKey(d.name)();
+      });
 
     for (var key in IFGVis.colors) {
       groups[key] = makeGroup(key, data.filter(filterFunc(key)));
