@@ -1,4 +1,7 @@
-(function(){
+// IFG-Anfragen Vis
+// (c) 2013 Stefan Wehrmeyer
+
+(function($){
 
   var margin = {top: 20, right: 20, bottom: 20, left: 20};
   var innerX = {top: 0, right: 50, bottom: 30, left: 80};
@@ -460,4 +463,4 @@
   dataLoaded(null, IFGVis.data);
   // d3.csv("data.csv", dataLoaded);
 
-}());
+}(jQuery));
