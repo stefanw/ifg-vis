@@ -59,10 +59,10 @@
   var filter = svg.append('defs')
     .append('filter')
       .attr('id', 'highlight')
-      .attr('x', '0')
-      .attr('y', '0')
-      .attr('width', '1')
-      .attr('height', '1');
+      .attr('x', '-0.1')
+      .attr('y', '-0.1')
+      .attr('width', '1.2')
+      .attr('height', '1.2');
 
   filter.append('feFlood')
     .attr('flood-color', '#fff')
@@ -94,9 +94,9 @@
         svg.select('#label')
           .text(IFGVis.labels[key])
           .style('fill', IFGVis.colors[key])
-          .attr('transform', 'translate(' + (innerXWidth + innerX.left + 40) + ',' + (obj.labelpos + 12) + ')');
+          .attr('transform', 'translate(' + (innerXWidth + innerX.left + 40) + ',' + (obj.labelpos + 10) + ')');
         svg.select('#label-triangle')
-          .attr('transform', 'translate(' + (innerXWidth + innerX.left) + ',' + (obj.labelpos + 20) + ')');
+          .attr('transform', 'translate(' + (innerXWidth + innerX.left) + ',' + (obj.labelpos + 22) + ')');
         svg.selectAll('.label').style('display', 'block');
         obj.group.selectAll('.circle-number').style('display', 'block');
       } else {
@@ -216,7 +216,7 @@
       .attr('d', makeTriangle.type('triangle-up')())
       .attr('class', 'triangle circle-number')
       .attr('transform', function(d){
-        return 'translate(' + (x(d.year)) + ',' + (y(d.transparency) + 10) + ')';
+        return 'translate(' + (x(d.year)) + ',' + (y(d.transparency) + 8) + ')';
       })
       .style('display', 'none');
 
@@ -224,7 +224,7 @@
       .attr('class', 'circle-number highlight')
       .style('fill', IFGVis.colors[key])
       .attr('transform', function(d){
-        return 'translate(' + (x(d.year)) + ',' + (y(d.transparency) + 26) + ')';
+        return 'translate(' + (x(d.year)) + ',' + (y(d.transparency) + 32) + ')';
       })
       .style('display', 'none')
       .attr('text-anchor', 'middle');
