@@ -255,7 +255,7 @@
     group.data(groupData)
       .on("mouseover", activateGroup(key, true))
       .on("mouseout", deactivateGroup(key))
-      .on("touch", navigateToKey(key))
+      .on("touchstart", navigateToKey(key))
       .on("click", navigateToKey(key));
 
     var lastBubble = groupData[groupData.length - 1];
@@ -344,7 +344,7 @@
       .on("mouseout", function(d){
         deactivateGroup(d.name)();
       })
-      .on("touch", function(d){
+      .on("touchstart", function(d){
         navigateToKey(d.name)();
       })
       .on("click", function(d){
