@@ -119,25 +119,28 @@ body {
 }
 
 .close, .close:hover, .close:visited {
+  cursor: pointer;
   font-size: 24px;
   float:right;
   text-decoration: none;
   color: #333;
-  width: 20px;
-  line-height: 20px;
-  padding: 0 2px 2px;
+  line-height: 0;
+  vertical-align: middle;
+  padding: 8px 4px 12px;
   text-align: center;
   border: 1px solid #fff;
   -webkit-border-radius: 50%;
   -moz-border-radius: 50%;
   border-radius: 50%;
 }
+
+.close:before {
+  content: "×";
+}
+
 .close:hover {
   background-color: #fff;
 }
 .clearfix {
   clear: both;
-}
-.highlight {
-  filter:url(#highlight)
 }
