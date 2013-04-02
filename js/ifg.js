@@ -3,6 +3,9 @@
 
 (function($){
 
+  var isTouch = ('ontouchstart' in window) || window.DocumentTouch && document instanceof DocumentTouch;
+
+
   var margin = {top: 20, right: 20, bottom: 20, left: 20};
   var innerX = {top: 0, right: 50, bottom: 30, left: 80};
   var innerY = {top: 30, right: 80, bottom: 50, left: 30};
@@ -255,11 +258,15 @@
       .text('bewilligt');
 
 
-    group.data(groupData)
-      .on("mouseover", activateGroup(key, true))
-      .on("mouseout", deactivateGroup(key))
-      .on("touchstart", navigateToKey(key))
-      .on("click", navigateToKey(key));
+    if (isTouch){
+      group.data(groupData)
+        .on("touchstart", navigateToKey(key));
+    } else {
+      group.data(groupData)
+        .on("mouseover", activateGroup(key, true))
+        .on("mouseout", deactivateGroup(key))
+        .on("click", navigateToKey(key));
+    }
 
     var lastBubble = groupData[groupData.length - 1];
     var labelpos = y(lastBubble.transparency);
@@ -340,19 +347,25 @@
     svg.selectAll('.circle')
       .attr('transform', 'translate(' + innerX.left + ',' + innerY.top + ')')
       .attr("cx", function(d) { return x(d.year); })
-      .attr("cy", function(d) { return y(d.transparency); })
-      .on("mouseover", function(d){
-        activateGroup(d.name, true)();
-      })
-      .on("mouseout", function(d){
-        deactivateGroup(d.name)();
-      })
-      .on("touchstart", function(d){
-        navigateToKey(d.name)();
-      })
-      .on("click", function(d){
-        navigateToKey(d.name)();
-      });
+      .attr("cy", function(d) { return y(d.transparency); });
+
+    if (isTouch){
+      svg.selectAll('.circle')
+        .on("touchstart", function(d){
+          navigateToKey(d.name)();
+        });
+    } else {
+      svg.selectAll('.circle')
+        .on("mouseover", function(d){
+          activateGroup(d.name, true)();
+        })
+        .on("mouseout", function(d){
+          deactivateGroup(d.name)();
+        })
+        .on("click", function(d){
+          navigateToKey(d.name)();
+        });
+    }
 
     for (var key in IFGVis.colors) {
       groups[key] = makeGroup(key, data.filter(filterFunc(key)));
