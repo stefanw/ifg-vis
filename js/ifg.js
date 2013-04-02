@@ -368,10 +368,6 @@
       "*args": "show"
     },
 
-    home: function(){
-
-    },
-
     show: function(args) {
       if (initial && args === "") {
         router.navigate(IFGVis.defaultInstitution, {trigger: true});
