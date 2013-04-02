@@ -44,7 +44,10 @@ body {
 .triangle {
   fill: #fff;
 }
-#label {
+.label-background {
+  fill: #fff;
+}
+#label-text {
   font-size: 18px;
   font-weight: bold;
 }

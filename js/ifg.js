@@ -58,25 +58,9 @@
     });
 
 
-  var svg = d3.select("#vis").append("svg")
+  var svg = d3.select("#vis").append("svg:svg")
     .attr("width", width + margin.left + margin.right)
     .attr("height", height + margin.top + margin.bottom);
-
-  var filter = svg.append('defs')
-    .append('filter')
-      .attr('id', 'highlight')
-      .attr('x', '-0.1')
-      .attr('y', '-0.1')
-      .attr('width', '1.2')
-      .attr('height', '1.2');
-
-  filter.append('feFlood')
-    .attr('flood-color', '#fff')
-    .attr('result', 'out1');
-  filter.append('feComposite')
-    .attr('in', 'SourceGraphic')
-    .attr('in2', 'out1')
-    .attr('operator', 'over');
 
   svg = svg.append("g")
       .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
@@ -98,11 +82,18 @@
       obj.group.select('.line').style('display', 'block');
       if (stack[stack.length - 1] === key) {
         svg.select('#label')
-          .text(IFGVis.labels[key])
-          .style('fill', IFGVis.colors[key])
-          .attr('transform', 'translate(' + (innerXWidth + innerX.left + 40) + ',' + (obj.labelpos + 10) + ')');
+          .attr('transform', 'translate(' + (innerXWidth + innerX.left + 40) + ',' + (obj.labelpos + 12) + ')')
+          .style('display', 'block');
         svg.select('#label-triangle')
           .attr('transform', 'translate(' + (innerXWidth + innerX.left) + ',' + (obj.labelpos + 22) + ')');
+        svg.select('#label-text')
+          .text(IFGVis.labels[key])
+          .style('fill', IFGVis.colors[key]);
+        var bbox = svg.select('#label-text').node().getBBox();
+        svg.select('#label-rect')
+          .attr('transform', 'translate(' + (-bbox.width - 5) + ',' + (-20) + ')')
+          .attr('width', bbox.width + 10)
+          .attr('height', bbox.height + 5);
         svg.selectAll('.label').style('display', 'block');
         obj.group.selectAll('.circle-number').style('display', 'block');
       } else {
@@ -129,7 +120,7 @@
       var obj = groups[key];
       if (obj.isActive) { return; }
       obj.group.select('.line').style('display', 'none');
-      svg.selectAll(".dot").style("fill", "").classed('active', false);
+      svg.selectAll("." + key).style("fill", "").classed('active', false);
       obj.group.selectAll('.circle-number').style('display', 'none');
       refreshAllActiveGroups();
     };
@@ -220,17 +211,28 @@
 
     circleGroup.append('path')
       .attr('d', makeTriangle.type('triangle-up')())
-      .attr('class', 'triangle circle-number')
+      .attr('class', 'triangle circle-number label-background')
       .attr('transform', function(d){
         return 'translate(' + (x(d.year)) + ',' + (y(d.transparency) + 8) + ')';
       })
       .style('display', 'none');
 
-    var t = circleGroup.append('text')
+    var circleGroupText = circleGroup.append('g')
+      .attr('class', 'circle-number');
+
+    circleGroupText.append('rect')
+        .attr('width', '70')
+        .attr('class', 'label-background')
+        .attr('height', '70')
+        .attr('transform', function(d){
+          return 'translate(' + (x(d.year) - 35) + ',' + (y(d.transparency) + 12) + ')';
+        });
+
+    var t = circleGroupText.append('text')
       .attr('class', 'circle-number highlight')
       .style('fill', IFGVis.colors[key])
       .attr('transform', function(d){
-        return 'translate(' + (x(d.year)) + ',' + (y(d.transparency) + 32) + ')';
+        return 'translate(' + (x(d.year)) + ',' + (y(d.transparency) + 31) + ')';
       })
       .style('display', 'none')
       .attr('text-anchor', 'middle');
@@ -298,18 +300,25 @@
       .attr('transform', 'translate(' + innerX.left + ',' + innerX.top + ')')
       .call(xAxis);
 
+    var label = svg.append('g')
+      .attr('id', 'label')
+      .attr('class', 'label')
+      .style('display', 'none');
 
-    svg.append('text')
-      .attr('text-anchor', 'end')
-      .attr('transform', 'translate(' + (innerXWidth) + ',' + (innerY.top) + ')')
-      .attr('class', 'highlight label')
-      .attr('id', 'label');
-
+    label.append('rect')
+      .attr('id', 'label-rect')
+      .attr('class', 'label-background')
+      .attr('x', 0)
+      .attr('y', 0)
+      .attr('width', 1)
+      .attr('height', 1);
     svg.append('path')
       .attr('id', 'label-triangle')
       .attr('d', makeTriangle.type('triangle-down')())
-      .attr('class', 'triangle label')
-      .style('display', 'none');
+      .attr('class', 'triangle label label-background');
+    label.append('text')
+      .attr('id', 'label-text')
+      .attr('text-anchor', 'end');
 
     circleRadius.domain(d3.extent(data, function(d) { return d.count; }));
 
