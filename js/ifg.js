@@ -445,7 +445,13 @@
   };
 
   var updateNav = function(){
-    router.navigate(stack.join('&'), {trigger: true});
+    var url;
+    if (stack.length > 0) {
+      url = stack.join('&');
+    } else {
+      url = '!';
+    }
+    router.navigate(url, {trigger: true});
   };
 
   $(function(){
