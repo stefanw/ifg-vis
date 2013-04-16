@@ -8,7 +8,7 @@
 
   var margin = {top: 20, right: 20, bottom: 20, left: 20};
   var innerX = {top: 0, right: 50, bottom: 30, left: 80};
-  var innerY = {top: 30, right: 80, bottom: 50, left: 30};
+  var innerY = {top: 30, right: 80, bottom: 80, left: 30};
 
   d3.selection.prototype.moveToFront = function() {
     return this.each(function() {
