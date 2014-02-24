@@ -484,7 +484,7 @@
     });
   });
 
-  dataLoaded(null, IFGVis.data);
-  // d3.csv("data.csv", dataLoaded);
+  // dataLoaded(null, IFGVis.data);
+  d3.csv('data.csv', dataLoaded);
 
 }(jQuery));
