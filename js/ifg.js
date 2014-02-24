@@ -1,9 +1,13 @@
+/* jshint strict: true, quotmark: false, es3: true */
+/* global jQuery: false, d3: false, Backbone: false, IFGVis: false */
+
 // IFG-Anfragen Vis
 // (c) 2013 Stefan Wehrmeyer
 
 (function($){
+  "use strict";
 
-  var isTouch = ('ontouchstart' in window) || window.DocumentTouch && document instanceof DocumentTouch;
+  var isTouch = ('ontouchstart' in window) || window.DocumentTouch && document instanceof window.DocumentTouch;
 
 
   var margin = {top: 20, right: 20, bottom: 20, left: 20};
@@ -74,7 +78,7 @@
 
   var activeGroups = 0;
 
-  var activateGroup = function(key, hover) {
+  var activateGroup = function(key) {
     return function(){
       var obj = groups[key];
       obj.group.moveToFront();
@@ -474,7 +478,7 @@
       stack = [];
       updateNav();
     });
-    $('.auswahl-liste input').change(function(e){
+    $('.auswahl-liste input').change(function(){
       toggleOnStack($(this).val(), $(this).prop('checked'));
       updateNav();
     });
